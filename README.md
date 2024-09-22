@@ -70,8 +70,7 @@ curl -X GET "http://127.0.0.1:8000/bills?min_total=10&max_total=10000&payment_ty
 ```bash
 curl -X GET "http://127.0.0.1:8000/bill/12345"
 ```
-![Text bill view](img/nano-text-bill.png)
-*Text bill view*
+<img src="img/nano-text-bill.png" alt="Text bill view" width="400"/>
 
 ## API Documentation
 
