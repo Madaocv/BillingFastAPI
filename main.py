@@ -5,7 +5,7 @@ from models import BillCreate, Bill, BillResponse, init_db
 from typing import Optional, List
 from contextlib import asynccontextmanager
 from datetime import datetime
-from pprint import pformat
+from fastapi import status
 import uuid
 import pyqrcode
 from qr2text import QR
@@ -17,10 +17,17 @@ async def lifespan(app: FastAPI):
     await init_db()
     yield
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    title="Billing API",
+    description="API для управління чеками",
+    version="1.0.0",
+    docs_url="/swagger",
+    redoc_url="/redoc-docs",
+    lifespan=lifespan
+    )
 
 
-@app.post("/register")
+@app.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserCreate):
     if await User.get_user_id(user.username):
         raise HTTPException(status_code=400, detail="Username already registered")
@@ -64,10 +71,10 @@ async def refresh_token(token: RefreshToken):
     }
 
 
-@app.post("/bill", response_model=BillResponse)
+@app.post("/bill", response_model=BillResponse, status_code=status.HTTP_201_CREATED)
 async def create_bill(receipt_data: BillCreate, user_id: int = Depends(Token.get_current_user)):
     bill_id = (uuid.uuid4().int >> 64) % 100000
-    bill_id_str = str(bill_id).ljust(5, '0')
+    bill_id_str = int(str(bill_id).ljust(5, '0'))
     receipt_entry = {
         "id": bill_id_str,
         "products": receipt_data.products,
@@ -106,7 +113,7 @@ async def get_bills(
 
 
 @app.get("/bill/{bill_id}", response_class=PlainTextResponse)
-async def get_bill_text(bill_id: str, line_length: int = 40):
+async def get_bill_text(bill_id: int, line_length: int = 40):
     receipt = await Bill.get_bill_by_id(bill_id)
     nameinbill = await Bill.get_user_by_bill_id(bill_id)
     if not receipt:
