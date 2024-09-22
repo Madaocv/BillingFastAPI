@@ -10,7 +10,9 @@ import uuid
 import pyqrcode
 from qr2text import QR
 from PIL import Image
-
+import logging
+from logging.handlers import RotatingFileHandler
+import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -25,19 +27,42 @@ app = FastAPI(
     redoc_url="/redoc-docs",
     lifespan=lifespan
     )
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+log_directory = 'logs'
+log_file_path = os.path.join(log_directory, 'app.log')
+if not os.path.exists(log_directory):
+    os.makedirs(log_directory)
+if not os.path.exists(log_file_path):
+    with open(log_file_path, 'w'):
+        pass
+file_handler = RotatingFileHandler(log_file_path, maxBytes=5*1024*1024, backupCount=5)
+file_handler.setLevel(logging.INFO)
 
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
 
 @app.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserCreate):
     if await User.get_user_id(user.username):
+        logger.warning(f"Attempt to register with existing username: {user.username}")
         raise HTTPException(status_code=400, detail="Username already registered")
     await User.create(user)
+    logger.info(f"User registered successfully: {user.username}")
     return {"message": "User registered successfully"}
 
 
 @app.post("/login")
 async def login(user: UserAuthenticate):
     if not await User.authenticate(user.username, user.password):
+        logger.warning(f"Invalid login attempt for username: {user.username}")
         raise HTTPException(status_code=400, detail="Invalid username or password")
     access_token = Token.create_access_token(username=user.username)
     new_refresh_token = Token.create_refresh_token(username=user.username)
@@ -47,6 +72,7 @@ async def login(user: UserAuthenticate):
         access_token=access_token,
         refresh_token=new_refresh_token
     )
+    logger.info(f"User logged in successfully: {user.username}")
     return {
         "access_token": access_token,
         "refresh_token": new_refresh_token,
@@ -85,6 +111,7 @@ async def create_bill(receipt_data: BillCreate, user_id: int = Depends(Token.get
         "notes": receipt_data.notes
     }
     await Bill.save_bill(receipt_entry)
+    logger.info(f"Bill created successfully for user_id: {user_id} with bill_id: {bill_id_str}")
     return BillResponse.from_receipt(receipt_entry)
 
 
