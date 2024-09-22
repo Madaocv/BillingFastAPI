@@ -68,9 +68,9 @@ curl -X GET "http://127.0.0.1:8000/bills?min_total=10&max_total=10000&payment_ty
 ```
 ### 6. cURL bill text representation:
 ```bash
-curl -X GET "http://127.0.0.1:8000/bill/12345"
+curl -X GET "http://127.0.0.1:8000/bill/90400"
 ```
-<img src="img/nano-text-bill.png" alt="Text bill view" width="400"/>
+<img src="img/nano-text-bill.png" alt="Text bill view" width="300"/>
 
 ## API Documentation
 
