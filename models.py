@@ -11,7 +11,6 @@ import os
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# DATABASE_URL = "postgresql://myuser:mypassword@localhost:5432/mydatabase"
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://myuser:mypassword@localhost:5432/mydatabase")
 SECRET_KEY = "DATAENCRYPTIONSTANDARDISABESTSYMMETRIC-KEYALGORITHMFORTHEENCRYPTION"
 ALGORITHM = "HS256"
@@ -197,22 +196,20 @@ class Bill:
         
         if min_total is not None:
             query += f" AND total >= ${len(params) + 1}"
-            params.append(float(min_total))  # Ensure it's a float
+            params.append(float(min_total))
         
         if max_total is not None:
             query += f" AND total <= ${len(params) + 1}"
-            params.append(float(max_total))  # Ensure it's a float
+            params.append(float(max_total))
         
         if payment_type:
             query += f" AND payment_type = ${len(params) + 1}"
-            params.append(str(payment_type))  # Ensure it's a string
+            params.append(str(payment_type))
 
         query += f" LIMIT ${len(params) + 1} OFFSET ${len(params) + 2}"
         params.extend([limit, offset])
 
         conn = await asyncpg.connect(DATABASE_URL)
-        
-        # Execute the query with parameters
         rows = await conn.fetch(query, *params)
         
         bills = []
@@ -243,12 +240,9 @@ class Bill:
     async def get_bill_by_id(bill_id: int) -> Optional[BillResponse]:
         conn = await asyncpg.connect(DATABASE_URL)
         try:
-            # Отримуємо основну інформацію про рахунок
             row = await conn.fetchrow("SELECT * FROM bills WHERE id = $1", bill_id)
-
             if not row:
                 return None
-            
             receipt = {
                 "id": row["id"],
                 "user_id": row["user_id"],
@@ -259,7 +253,6 @@ class Bill:
                 "products": []
             }
 
-            # Отримуємо продукти, пов'язані з цим рахунком
             products = await conn.fetch("SELECT name, price, quantity FROM bill_products WHERE bill_id = $1", bill_id)
             for product in products:
                 receipt["products"].append({
@@ -275,30 +268,19 @@ class Bill:
 
     @staticmethod
     async def get_user_by_bill_id(bill_id: int) -> Dict[str, str]:
-        """
-        Отримує інформацію про користувача (username та full_name) на основі bill_id
-        """
         conn = await asyncpg.connect(DATABASE_URL)
-        
         try:
-            # Отримуємо user_id з таблиці bills
             bill_row = await conn.fetchrow("SELECT user_id FROM bills WHERE id = $1", bill_id)
-            
             if not bill_row:
                 raise HTTPException(status_code=404, detail="Bill not found")
-            
             user_id = bill_row['user_id']
-
-            # Тепер отримуємо username та full_name з таблиці users
             user_info = await conn.fetchrow("SELECT username, full_name FROM users WHERE id = $1", user_id)
-            
             if not user_info:
                 raise HTTPException(status_code=404, detail="User not found")
-
             return {"username": user_info['username'], "full_name": user_info['full_name']}
-        
         finally:
             await conn.close()
+
 
 class Token:
     @staticmethod
