@@ -80,3 +80,12 @@ curl -X GET "http://127.0.0.1:8000/bill/90400"
 ### Documentation with ReDoc is available at URL: http://127.0.0.1:8000/redoc-docs
 ![ReDoc](img/redocAPI.png)
 *ReDoc*
+
+## Postman Collection
+
+Postman is a collection for API testing. You can import it using this file: [BillingFastAPI.postman_collection.json](postman/BillingFastAPI.postman_collection.json).
+
+### How to import
+1. Open Postman and click on `Import'.
+2. Select the `BillingFastAPI.postman_collection.json` file from the `postman` folder.
+3. Now you can use the collection to test our APIs.

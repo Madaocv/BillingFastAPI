@@ -1,0 +1,240 @@
+{
+	"info": {
+		"_postman_id": "12c30a70-a4f0-4f56-98ce-3037ef850228",
+		"name": "BillingFastAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6509553"
+	},
+	"item": [
+		{
+			"name": "User register POST",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\": \"newuser\", \"password\": \"newpassword\", \"full_name\": \"Rick Grimes\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/register",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"register"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://127.0.0.1:8000/register\" \\\n-H \"Content-Type: application/json\" \\\n-d '{\"username\": \"newuser\", \"password\": \"newpassword\", \"full_name\": \"John Doe\"}'\n"
+			},
+			"response": []
+		},
+		{
+			"name": "User login POST",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\": \"newuser\", \"password\": \"newpassword\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"login"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://127.0.0.1:8000/login\" \\\n-H \"Content-Type: application/json\" \\\n-d '{\"username\": \"newuser\", \"password\": \"newpassword\"}'\n"
+			},
+			"response": []
+		},
+		{
+			"name": "User refresh-token POST",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"refresh_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VyIiwiZXhwIjoxNzI5NDQ2NDM5fQ.D_FkIO-TgH_G0lTIOVji79sYBoKcBwfNs_DHMHvjLMQ\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/refresh-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"refresh-token"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST http://localhost:8000/refresh-token \\\n-H \"Content-Type: application/json\" \\\n-d '{\"refresh_token\": \"your_refresh_token_here\"}'\n"
+			},
+			"response": []
+		},
+		{
+			"name": "User create bill POST",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VyIiwiZXhwIjoxNzI3MDIzNTMxfQ.QppSoj6lvKOYNdthMURRG612rgYfAlGBGzQPkz7d3WI"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"products\": [\n        {\n            \"name\": \"Product 1\",\n            \"price\": 10.50,\n            \"quantity\": 2\n        },\n        {\n            \"name\": \"Product 2\",\n            \"price\": 20.00,\n            \"quantity\": 1\n        }\n    ],\n    \"payment\": {\n        \"type\": \"cash\",\n        \"amount\": 50.00\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/bill",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"bill"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://127.0.0.1:8000/receipts\" \\\n-H \"Content-Type: application/json\" \\\n-H \"Authorization: Bearer <your_access_token>\" \\\n-d '{\n    \"products\": [\n        {\n            \"name\": \"Product 1\",\n            \"price\": 10.50,\n            \"quantity\": 2\n        },\n        {\n            \"name\": \"Product 2\",\n            \"price\": 20.00,\n            \"quantity\": 1\n        }\n    ],\n    \"payment\": {\n        \"type\": \"cash\",\n        \"amount\": 50.00\n    }\n}'\n"
+			},
+			"response": []
+		},
+		{
+			"name": "User filtering bill GET",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJuZXd1c2VyIiwiZXhwIjoxNzI3MTA2MTI2fQ.iUDpEaunLA9zGI7ExwtgQO3xT-IbPUHOa0N-mmN4r2E"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/bills?min_total=100&max_total=10000&payment_type=nano&date_from=2024-01-01&date_to=2025-02-20&limit=2&offset=1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"bills"
+					],
+					"query": [
+						{
+							"key": "min_total",
+							"value": "100"
+						},
+						{
+							"key": "max_total",
+							"value": "10000"
+						},
+						{
+							"key": "payment_type",
+							"value": "nano"
+						},
+						{
+							"key": "date_from",
+							"value": "2024-01-01"
+						},
+						{
+							"key": "date_to",
+							"value": "2025-02-20"
+						},
+						{
+							"key": "limit",
+							"value": "2"
+						},
+						{
+							"key": "offset",
+							"value": "1"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://127.0.0.1:8000/bills?date_from=01.01.2023&min_total=20&payment_type=cash\" \\\n-H \"Authorization: Bearer <your_access_token>\"\n"
+			},
+			"response": []
+		},
+		{
+			"name": "No auth user check bill GET",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/bill/90400",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"bill",
+						"90400"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
